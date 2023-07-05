@@ -1,46 +1,44 @@
 <?php
 
-use Symfony\Component\HttpClient\HttpClient;
-
 require '../vendor/autoload.php';
 
-$client = HttpClient::create();
-$response = $client->request('GET', 'https://fr.wikipedia.org/wiki/Liste_des_pays_par_population');
+use Symfony\Component\HttpClient\HttpClient;
 
-if ($response->getStatusCode() === 200) {
-    $content = $response->getContent();
+class Scraper
+{
+    public function scrapePage(): array
+    {
+        $httpClient = HttpClient::create();
+        $response = $httpClient->request('GET', 'https://fr.wikipedia.org/wiki/Liste_des_pays_par_population');
+        $content = $response->getContent();
 
-    // Utilisation de l'analyseur DOM de PHP pour extraire les données
-    $dom = new DOMDocument();
-    @$dom->loadHTML($content);
-    $xpath = new DOMXPath($dom);
+        $dom = new DOMDocument();
+        @$dom->loadHTML($content);
 
-    $rows = $xpath->query('//table[contains(@class, "wikitable")]/tbody/tr');
+        $xpath = new DOMXPath($dom);
+        $elements = $xpath->query('.//span[@class="datasortkey"]/a');
 
-    if ($rows->length > 0) {
-        echo '<ul>' . PHP_EOL;
+        $data = [];
+        foreach ($elements as $element) {
+            if ($element instanceof DOMElement) {
+                $name = $element->textContent;
+                $value = '';
+                $nextSibling = $element->nextSibling;
 
-        foreach ($rows as $index => $row) {
-            $countryNode = $xpath->query('.//span[@class="datasortkey"]/a', $row)->item(0);
-            $populationNodes = $xpath->query('.//td[@align="right"]', $row);
+                if ($nextSibling instanceof DOMElement) {
+                    $value = $nextSibling->textContent;
+                }
 
-            if ($countryNode && $populationNodes->length >= 2) {
-                $country = $countryNode->textContent;
-                $population1 = $populationNodes->item(0)->textContent;
-                $population2 = $populationNodes->item(1)->textContent;
-
-                echo '<li>' . PHP_EOL;
-                echo '<span class="country">' . $country . '</span>' . PHP_EOL;
-                echo '<span class="population">' . $population1 . '</span>' . PHP_EOL;
-                echo '<span class="population">' . $population2 . '</span>' . PHP_EOL;
-                echo '</li>' . PHP_EOL;
+                $data[$name] = $value;
             }
         }
 
-        echo '</ul>';
-    } else {
-        echo 'Aucune donnée trouvée.';
+        return $data;
     }
-} else {
-    echo 'Erreur lors de la requête HTTP.';
 }
+
+$scraper = new Scraper();
+$result = $scraper->scrapePage();
+
+print_r($result);
+
