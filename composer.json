@@ -5,7 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Abriolon\\ScrapWiki\\": "src/"
+            "Abriolon\\Scrappy\\": "src/"
         }
     },
     "authors": [
@@ -16,7 +16,9 @@
     ],
     "require": {
         "php": ">=8.0",
-        "symfony/http-client": "^6.3"
+        "symfony/http-client": "^6.3",
+        "symfony/dom-crawler": "^6.3 || ^5.3",
+        "symfony/css-selector": "^6.3 || ^5.3"
     },
     "require-dev": {
         "phpstan/phpstan": "^1.10",
