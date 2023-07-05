@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Abriolon\Scrappy;
 
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\DomCrawler\Crawler;
 
 class Api
 {
@@ -15,12 +15,19 @@ class Api
         $response = $client->request('GET', 'https://fr.wikipedia.org/wiki/Liste_des_pays_par_population');
         $html = $response->getContent();
 
-        $crawler = new Crawler($html);
-        $crawler = $crawler->filter('span.datasortkey a');
+        $dom = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        libxml_clear_errors();
+
+        $xpath = new \DOMXPath($dom);
+        $rows = $xpath->query('//table[contains(@class, "wikitable")]/tbody/tr');
 
         $countries = [];
-        foreach ($crawler as $domElement) {
-            $countries[] = $domElement->nodeValue;
+        foreach ($rows as $row) {
+            $countryName = $xpath->evaluate('string(.//td[2]/span/a)', $row);
+            $population = $xpath->evaluate('string(.//td[3])', $row);
+            $countries[$countryName] = $population;
         }
 
         return $countries;
@@ -28,5 +35,5 @@ class Api
 }
 
 $api = new Api();
-$crawler = $api->getCountry();
-echo json_encode($crawler);
+$countries = $api->getCountry();
+echo json_encode($countries);
