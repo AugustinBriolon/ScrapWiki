@@ -16,7 +16,7 @@ class Api
         $html = $response->getContent();
 
         $crawler = new Crawler($html);
-        $crawler = $crawler->filter('table tr td:nth-child(2) a');
+        $crawler = $crawler->filter('span.datasortkey a');
 
         $countries = [];
         foreach ($crawler as $domElement) {
