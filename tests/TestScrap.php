@@ -7,7 +7,7 @@ use Abriolon\Scrappy\Api;
 
 class ApiTest extends TestCase
 {
-    public function testGetH2Elements(): void
+    public function testGetCountry(): void
     {
         $api = new Api();
         $crawler = $api->getCountry();

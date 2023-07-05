@@ -11,11 +11,16 @@ composer install
 ```
 
 ```bash
-php vendor/bin/phpstan analyse src --level=max
+composer test
 ```
 
 ```bash
-php vendor/bin/phpunit tests
+composer phpstan
+```
+
+
+```bash
+php build/index.php
 ```
 
 ## License
