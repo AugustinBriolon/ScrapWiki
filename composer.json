@@ -1,0 +1,28 @@
+{
+    "name": "abriolon/scrap-wiki",
+    "description": "Scrap Wiki Page",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Abriolon\\ScrapWiki\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Augustin",
+            "email": "augustin.briolon@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "symfony/http-client": "^6.3"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^9.6||^10.2"
+    },
+    "scripts": {
+        "phpstan": "@php vendor/bin/phpstan analyse src --level=max"
+    }
+}
